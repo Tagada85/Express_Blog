@@ -4,11 +4,11 @@ block content
 	form(action='/new_post' method="POST")
 		.form-group
 			label(for="title") Blog Title
-			input(type="text" id="title" name="title")
+			input(type="text" id="title" name="title").form-control
 		.form-group
 			label(for='author') Author
-			input(type="text" id="author" name='author')
+			input(type="text" id="author" name='author').form-control
 		.form-group
 			label(for='postBody') Blog Post
-			textarea(type="text" id="postBody" name='postBody')
+			textarea(type="text" id="postBody" name='postBody' rows="20").form-control.new-post-textarea
 		button(type="submit").btn.btn-success Submit New post
