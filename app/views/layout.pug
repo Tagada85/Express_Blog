@@ -3,7 +3,10 @@ head
 	title #{title}
 	link(rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous")
 	link(rel="stylesheet" href="/stylesheets/styles.css")
+	script(src="//cdn.auth0.com/js/lock/10.0/lock.min.js")
+	meta(name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no")
 	script(src="https://code.jquery.com/jquery-3.1.0.js"   integrity="sha256-slogkvB1K3VOkzAI8QITxV3VzpOnkeNVsKvtkYLMjfk="   crossorigin="anonymous")
+	
 	body.container.text-center
 		header
 			nav.navbar.navbar-default
@@ -16,4 +19,54 @@ head
 						a(href='/contact') Contact
 					li 
 						a(href='/new_post') Add New Post
+		input(type="submit" value="Sign In")#btn-login.btn-success.pull-right
+		div#logout-container
+			p Welcome:
+				span#name 
+			input(type="submit" value="Log Out")#btn-logout
 		block content
+
+
+	script.
+		var lock = new Auth0Lock('LcxVhI5Q51qkDvnTv2VzZwJ58W59a27g', 'tagada85.eu.auth0.com', {
+		    auth: { 
+		        params: { scope: 'openid email' } //Details: https://auth0.com/docs/scopes
+		    }
+		}
+		);
+		document.getElementById('btn-login').addEventListener('click', function() {
+		  lock.show();
+		});
+		lock.on("authenticated", function(authResult) {
+		  lock.getProfile(authResult.idToken, function(error, profile) {
+		    if (error) {
+		      // Handle error
+		      return;
+		    }
+
+		    localStorage.setItem('id_token', authResult.idToken);
+		    localStorage.setItem('profile', JSON.stringify(profile));
+		  });
+		});
+		var id_token = localStorage.getItem('id_token');
+		if (id_token) {
+		  lock.getProfile(id_token, function (err, profile) {
+		    if (err) {
+		      return alert('There was an error getting the profile: ' + err.message);
+		    }
+		    document.getElementById('name').textContent = profile.name;
+		  });
+		}
+		if(id_token == null){
+			document.getElementById('logout-container').style.display = 'none';
+			document.getElementById('btn-login').style.display = 'block';
+		}else{
+			document.getElementById('logout-container').style.display = 'block';
+			document.getElementById('btn-login').style.display = 'none';
+		}
+		document.getElementById('btn-logout').addEventListener('click', function(){
+			localStorage.removeItem('id_token');
+			localStorage.removeItem('profile');
+			window.location.href = "/";
+			window.location.reload(true);
+		});

@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 const Post = require('./models/Post');
 
+
 router.param('postId', (req, res, next, id) => {
 	Post.findById(id, (err, post) => {
 		if(err) return next(err);
@@ -19,6 +20,13 @@ router.param('postId', (req, res, next, id) => {
 router.get('/', (req, res, next)=> {
 	Post.find({}, (err, posts) => {
 		if(err) return next(err);
+		posts.sort((postA, postB) => {
+			if(postA.createdAt > postB.createdAt){
+				return -1;
+			}else{
+				return 1;
+			}
+		});
 		res.render('index', {posts: posts, title: 'HomePage', scripts: ['scripts/deletePost.js']});
 	});
 });

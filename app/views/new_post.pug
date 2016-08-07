@@ -1,7 +1,7 @@
 extends layout
 block content
 	h1 New post Page
-	form(action='/new_post' method="POST")
+	form(action='/new_post' method="POST")#form-post
 		.form-group
 			label(for="title") Blog Title
 			input(type="text" id="title" name="title").form-control
@@ -12,3 +12,16 @@ block content
 			label(for='postBody') Blog Post
 			textarea(type="text" id="postBody" name='postBody' rows="20").form-control.new-post-textarea
 		button(type="submit").btn.btn-success Submit New post
+	#error-msg
+		p Sorry friend! I'm the only on who can enter new blog posts.
+	script.
+		let localStorageJSON = JSON.parse(localStorage.getItem('profile'));
+		if(localStorage.getItem('profile') && localStorageJSON.name === 'Damien Cosset'){
+			document.getElementById('error-msg').style.display = 'none';
+			document.getElementById('form-post').style.display = 'block';
+		}else{
+			document.getElementById('form-post').style.display = 'none';
+			document.getElementById('error-msg').style.display = 'block';
+		}
+
+		
