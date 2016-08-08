@@ -11,7 +11,8 @@ block content
 				a(href=ref).lead #{post.title}
 				br
 				span Created at: #{post.createdAt}
-				button(id=post._id).btn.btn-danger.deleteBtn.pull-right Delete Post
+				if user
+					button(id=post._id).btn.btn-danger.deleteBtn.pull-right Delete Post
 	each s in scripts
 		script(src=s)
 		

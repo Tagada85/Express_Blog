@@ -1,7 +1,9 @@
 'use strict';
 const express = require('express');
 const router = express.Router();
+const passport = require('passport');
 const Post = require('./models/Post');
+const User = require('./models/User');
 
 
 router.param('postId', (req, res, next, id) => {
@@ -27,25 +29,37 @@ router.get('/', (req, res, next)=> {
 				return 1;
 			}
 		});
-		res.render('index', {posts: posts, title: 'HomePage', scripts: ['scripts/deletePost.js']});
+		res.render('index', {posts: posts, title: 'HomePage', scripts: ['scripts/deletePost.js'], user: req.user});
 	});
 });
 
 router.get('/contact', (req, res, next) => {	
-	res.render('contact', {title: 'Contact Page'});
-	next();
+	res.render('contact', {title: 'Contact Page', user: req.user});
 });
 
 router.get('/post/:postId', (req, res, next) => {
 	Post.findById(req.params.postId, (err, post) => {
 		if(err) return next(err);
-		res.render('post', {title: 'Blog Post', post: post});
+		res.render('post', {title: 'Blog Post', post: post, user: req.user});
 	});
 });
 
 router.get('/new_post', (req, res, next) => {
-	res.render('new_post', {title: 'Add new post'});
-	next();
+	res.render('new_post', {title: 'Add new post', user: req.user});
+});
+
+router.get('/auth/login/github',	
+	passport.authenticate('github'));
+
+router.get('/auth/github/return', 
+	passport.authenticate('github',{'failureRedirect': '/'}),
+	(req, res)=>{
+		res.redirect('/');
+	});
+
+router.get('/auth/logout', (req, res)=>{
+	req.logout();
+	res.redirect('/');
 });
 
 router.post('/new_post', (req, res, next) => {
